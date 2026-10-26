@@ -155,11 +155,21 @@ function getActivityCategory(type) {
 function generateSeedActivity() {
     if (State.activityLog.length > 0) return;
     const now = new Date();
-    [{ offset: -3600000, type: 'status_changed', entity: 'unit', entityId: 'u-003', description: '<strong>Mercedes Actros</strong> cambió a estado Taller', user: 'Carlos' },
+    const userName = State.user.name || 'Usuario'; // Usa el nombre del usuario actual
+    
+    [{ offset: -3600000, type: 'status_changed', entity: 'unit', entityId: 'u-003', description: '<strong>Mercedes Actros</strong> cambió a estado Taller', user: userName },
      { offset: -7200000, type: 'alert_created', entity: 'alert', entityId: 'a-001', description: 'Alerta creada: <strong>Mantenimiento Vencido</strong>', user: 'Sistema' },
-     { offset: -86400000, type: 'unit_created', entity: 'unit', entityId: 'u-005', description: '<strong>MAN TGX</strong> agregada a la flota', user: 'Carlos' }
+     { offset: -86400000, type: 'unit_created', entity: 'unit', entityId: 'u-005', description: '<strong>MAN TGX</strong> agregada a la flota', user: userName }
     ].forEach(entry => {
-        State.activityLog.push({ id: 'log-seed-' + Math.random().toString(36).substr(2, 9), timestamp: new Date(now.getTime() + entry.offset).toISOString(), type: entry.type, entity: entry.entity, entityId: entry.entityId, description: entry.description, user: entry.user });
+        State.activityLog.push({ 
+            id: 'log-seed-' + Math.random().toString(36).substr(2, 9), 
+            timestamp: new Date(now.getTime() + entry.offset).toISOString(), 
+            type: entry.type, 
+            entity: entry.entity, 
+            entityId: entry.entityId, 
+            description: entry.description, 
+            user: entry.user 
+        });
     });
 }
 
@@ -985,7 +995,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     currentUserId = session.user.id;
 
-    // 2. CARGAR DATOS DE SUPABASE
+    // 2. CARGAR PERFIL PRIMERO (para evitar el parpadeo)
+    try {
+        const { data: profileData } = await supabase.from('profiles').select('*').eq('id', currentUserId).single();
+        if (profileData) {
+            State.user.name = profileData.full_name || 'Usuario';
+            State.user.email = session.user.email;
+            State.user.plan = profileData.plan || 'free';
+            State.user.avatar_url = profileData.avatar_url || '';
+            
+            // ✅ Actualiza el nombre INMEDIATAMENTE antes de cualquier render
+            const greetingElement = document.querySelector('.greeting-name');
+            if (greetingElement) {
+                greetingElement.textContent = State.user.name;
+            }
+        }
+    } catch (error) {
+        console.error('Error cargando perfil:', error);
+    }
+
+    // 3. CARGAR RESTO DE DATOS
     try {
         const { data: fleetData } = await supabase.from('fleet').select('*').order('created_at', { ascending: false });
         if (fleetData && fleetData.length > 0) State.fleet = fleetData;
@@ -995,22 +1024,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const { data: alertsData } = await supabase.from('alerts').select('*');
         if (alertsData && alertsData.length > 0) State.alerts = alertsData;
-        
-        const { data: profileData } = await supabase.from('profiles').select('*').eq('id', currentUserId).single();
-        if (profileData) {
-            State.user.name = profileData.full_name || 'Usuario';
-            State.user.email = session.user.email;
-            State.user.plan = profileData.plan || 'free';
-            State.user.avatar_url = profileData.avatar_url || '';
-            
-            // ✅ AQUÍ ES DONDE DEBE IR: Actualiza el nombre en el HTML inmediatamente
-            document.querySelector('.greeting-name').textContent = State.user.name;
-        }
     } catch (error) {
         console.error('Error cargando datos:', error);
     }
 
-    // 3. RENDERIZAR
+    // 4. RENDERIZAR TODO
     [renderMetrics, renderDashboardFleet, renderDashboardAlerts, renderDashboardUpcoming, renderUpcomingFull, renderDashboardActivity, renderFleetFull, renderAlertsFull, renderActivityFull, renderAlertBadges, renderAvatar, renderCurrentPlan].forEach(subscribe);
     
     notify();

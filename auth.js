@@ -1,17 +1,7 @@
-// ==========================================
-// CONFIGURACIÓN DE SUPABASE
-// ==========================================
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from './config.js';
 
-let supabaseClient = null;
-
-if (SUPABASE_URL !== 'TU_SUPABASE_URL' && SUPABASE_URL.startsWith('http')) {
-    try {
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    } catch (error) {
-        console.error('Error inicializando Supabase:', error);
-    }
-}
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ==========================================
 // FUNCIONES DE UI
@@ -70,9 +60,6 @@ function setLoading(buttonId, isLoading, originalText) {
     }
 }
 
-// ==========================================
-// UTILIDAD: MOSTRAR/OCULTAR CONTRASEÑA
-// ==========================================
 function togglePassword(inputId, button) {
     const input = document.getElementById(inputId);
     const icon = button.querySelector('i');
@@ -94,29 +81,19 @@ async function handleLogin(event) {
     event.preventDefault();
     hideMessage();
 
-    if (!supabaseClient) {
-        showMessage('⚠️ Supabase no está configurado. Reemplaza las credenciales en el código.', 'warning');
-        return;
-    }
-
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
 
     setLoading('login-btn', true, 'Ingresar');
 
-    try {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-        if (error) {
-            showMessage(error.message, 'error');
-            setLoading('login-btn', false, 'Ingresar');
-        } else {
-            showMessage('¡Inicio de sesión exitoso! Redirigiendo...', 'success');
-            setTimeout(() => { window.location.href = 'index.html'; }, 800);
-        }
-    } catch (err) {
-        showMessage('Error de conexión. Intenta de nuevo.', 'error');
+    if (error) {
+        showMessage(error.message, 'error');
         setLoading('login-btn', false, 'Ingresar');
+    } else {
+        showMessage('¡Inicio de sesión exitoso! Redirigiendo...', 'success');
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
     }
 }
 
@@ -126,11 +103,6 @@ async function handleLogin(event) {
 async function handleRegister(event) {
     event.preventDefault();
     hideMessage();
-
-    if (!supabaseClient) {
-        showMessage('⚠️ Supabase no está configurado. Reemplaza las credenciales en el código.', 'warning');
-        return;
-    }
 
     const name = document.getElementById('register-name').value.trim();
     const email = document.getElementById('register-email').value.trim();
@@ -143,52 +115,67 @@ async function handleRegister(event) {
 
     setLoading('register-btn', true, 'Crear cuenta');
 
-    try {
-        const { data, error } = await supabaseClient.auth.signUp({
-            email,
-            password,
-            options: { data: { full_name: name } }
-        });
+    const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: name } }
+    });
 
-        if (error) {
-            showMessage(error.message, 'error');
-            setLoading('register-btn', false, 'Crear cuenta');
+    if (error) {
+        showMessage(error.message, 'error');
+        setLoading('register-btn', false, 'Crear cuenta');
+    } else {
+        if (data.user && !data.user.confirmed_at) {
+            showMessage('¡Cuenta creada! Revisa tu email para confirmar y luego inicia sesión.', 'success');
+            setTimeout(() => {
+                switchTab('login');
+                document.getElementById('login-email').value = email;
+            }, 2000);
         } else {
-            if (data.user && !data.user.confirmed_at) {
-                showMessage('¡Cuenta creada! Revisa tu email para confirmar y luego inicia sesión.', 'success');
-                setTimeout(() => {
-                    switchTab('login');
-                    document.getElementById('login-email').value = email;
-                }, 2000);
-            } else {
-                showMessage('¡Cuenta creada! Redirigiendo al dashboard...', 'success');
-                setTimeout(() => { window.location.href = 'index.html'; }, 1500);
-            }
-            setLoading('register-btn', false, 'Crear cuenta');
+            showMessage('¡Cuenta creada! Redirigiendo al dashboard...', 'success');
+            setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
         }
-    } catch (err) {
-        showMessage('Error de conexión. Intenta de nuevo.', 'error');
         setLoading('register-btn', false, 'Crear cuenta');
     }
 }
 
 // ==========================================
-// INICIALIZACIÓN
+// VERIFICAR SESIÓN
 // ==========================================
 async function checkExistingSession() {
-    if (!supabaseClient) return;
     try {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        if (user) window.location.href = 'index.html';
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) window.location.href = 'dashboard.html';
     } catch (error) {
         console.error('Error verificando sesión:', error);
     }
 }
 
+// ==========================================
+// EVENT LISTENERS
+// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
     checkExistingSession();
 
+    // Tabs
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+    });
+
+    // Toggle password
+    document.querySelectorAll('.password-toggle').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const input = btn.previousElementSibling;
+            togglePassword(input.id, btn);
+        });
+    });
+
+    // Forms
+    document.getElementById('login-form').querySelector('form').addEventListener('submit', handleLogin);
+    document.getElementById('register-form').querySelector('form').addEventListener('submit', handleRegister);
+
+    // URL params
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('mode') === 'register') {
         switchTab('register');

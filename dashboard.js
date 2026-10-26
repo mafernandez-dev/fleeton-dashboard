@@ -998,65 +998,71 @@ window.addEventListener('unhandledrejection', (e) => {
 // 8. INITIALIZATION
 // =========================================
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. VERIFICAR SESIÓN
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-        window.location.href = 'auth.html';
-        return;
-    }
-    currentUserId = session.user.id;
-
-    // 2. CARGAR PERFIL PRIMERO
     try {
-        const { data: profileData } = await supabase.from('profiles').select('*').eq('id', currentUserId).single();
-        if (profileData) {
-            State.user.name = profileData.full_name || 'Usuario';
-            State.user.email = session.user.email;
-            State.user.plan = profileData.plan || 'free';
-            State.user.avatar_url = profileData.avatar_url || '';
-            
-            // Actualiza el nombre INMEDIATAMENTE
-            const greetingElement = document.querySelector('.greeting-name');
-            if (greetingElement) {
-                greetingElement.textContent = State.user.name;
+        // 1. VERIFICAR SESIÓN
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+            window.location.href = 'auth.html';
+            return;
+        }
+        currentUserId = session.user.id;
+
+        // 2. CARGAR PERFIL PRIMERO
+        try {
+            const { data: profileData } = await supabase.from('profiles').select('*').eq('id', currentUserId).single();
+            if (profileData) {
+                State.user.name = profileData.full_name || 'Usuario';
+                State.user.email = session.user.email;
+                State.user.plan = profileData.plan || 'free';
+                State.user.avatar_url = profileData.avatar_url || '';
+                
+                // Actualiza el nombre INMEDIATAMENTE
+                const greetingElement = document.querySelector('.greeting-name');
+                if (greetingElement) {
+                    greetingElement.textContent = State.user.name;
+                }
             }
+        } catch (error) {
+            console.error('Error cargando perfil:', error);
+        }
+
+        // 3. CARGAR RESTO DE DATOS
+        try {
+            const { data: fleetData } = await supabase.from('fleet').select('*').order('created_at', { ascending: false });
+            if (fleetData && fleetData.length > 0) State.fleet = fleetData;
+
+            const { data: driversData } = await supabase.from('drivers').select('*');
+            if (driversData && driversData.length > 0) State.drivers = driversData;
+
+            const { data: alertsData } = await supabase.from('alerts').select('*');
+            if (alertsData && alertsData.length > 0) State.alerts = alertsData;
+        } catch (error) {
+            console.error('Error cargando datos:', error);
+        }
+
+        // 4. RENDERIZAR TODO
+        [renderMetrics, renderDashboardFleet, renderDashboardAlerts, renderDashboardUpcoming, renderUpcomingFull, renderDashboardActivity, renderFleetFull, renderAlertsFull, renderActivityFull, renderAlertBadges, renderAvatar, renderCurrentPlan].forEach(subscribe);
+        
+        notify();
+        lucide.createIcons();
+        
+        if (State.preferences.darkMode) { 
+            document.body.classList.add('dark-mode'); 
+            document.getElementById('toggle-dark-mode').checked = true; 
         }
     } catch (error) {
-        console.error('Error cargando perfil:', error);
+        console.error('Error en inicialización:', error);
+    } finally {
+        // 5. ✅ OCULTAR SPLASH SCREEN (SIEMPRE se ejecuta, haya error o no)
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.classList.add('hidden');
+                // Remover del DOM después de la animación
+                setTimeout(() => {
+                    splash.remove();
+                }, 400);
+            }
+        }, 500); // Aumentamos un poco el delay para asegurar que todo cargue
     }
-
-    // 3. CARGAR RESTO DE DATOS
-    try {
-        const { data: fleetData } = await supabase.from('fleet').select('*').order('created_at', { ascending: false });
-        if (fleetData && fleetData.length > 0) State.fleet = fleetData;
-
-        const { data: driversData } = await supabase.from('drivers').select('*');
-        if (driversData && driversData.length > 0) State.drivers = driversData;
-
-        const { data: alertsData } = await supabase.from('alerts').select('*');
-        if (alertsData && alertsData.length > 0) State.alerts = alertsData;
-    } catch (error) {
-        console.error('Error cargando datos:', error);
-    }
-
-    // 4. RENDERIZAR TODO
-    [renderMetrics, renderDashboardFleet, renderDashboardAlerts, renderDashboardUpcoming, renderUpcomingFull, renderDashboardActivity, renderFleetFull, renderAlertsFull, renderActivityFull, renderAlertBadges, renderAvatar, renderCurrentPlan].forEach(subscribe);
-    
-    notify();
-    lucide.createIcons();
-    
-    if (State.preferences.darkMode) { 
-        document.body.classList.add('dark-mode'); 
-        document.getElementById('toggle-dark-mode').checked = true; 
-    }
-
-    // 5. ✅ OCULTAR SPLASH SCREEN (con un pequeño delay para suavidad)
-    setTimeout(() => {
-        const splash = document.getElementById('splash-screen');
-        if (splash) {
-            splash.classList.add('hidden');
-            // Remover del DOM después de la animación
-            setTimeout(() => splash.remove(), 400);
-        }
-    }, 300);
 });

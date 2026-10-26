@@ -1004,10 +1004,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             State.user.plan = profileData.plan || 'free';
             State.user.avatar_url = profileData.avatar_url || '';
             
-            // ✅ Actualiza el nombre INMEDIATAMENTE antes de cualquier render
+            // ✅ Actualiza el nombre INMEDIATAMENTE
             const greetingElement = document.querySelector('.greeting-name');
             if (greetingElement) {
                 greetingElement.textContent = State.user.name;
+            }
+            
+            // ✅ Muestra el avatar con las iniciales correctas
+            const avatarBtn = document.getElementById('avatar-btn');
+            if (avatarBtn) {
+                avatarBtn.style.display = ''; // Restaura el display original
             }
         }
     } catch (error) {

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleet OS - Gestión Inteligente de Flotas</title>
+    <meta name="description" content="El dashboard más limpio y eficiente para gestionar tus unidades móviles. Alertas, mantenimiento y control total en un solo lugar.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="#" class="logo">
+                <div class="logo-icon">
+                    <i data-lucide="truck"></i>
+                </div>
+                Fleet OS
+            </a>
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Funciones</a>
+                <a href="#pricing" class="nav-link">Precios</a>
+                <a href="demo.html" class="nav-link">Demo</a>
+                <a href="auth.html" class="nav-link" id="nav-login-btn">Iniciar Sesión</a>
+                <a href="auth.html?mode=register" class="nav-cta" id="nav-register-btn">Registrarse</a>
+            </div>
+            <button class="nav-mobile-toggle" id="mobile-toggle" aria-label="Abrir menú">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+    </nav>
+
+      <!-- OVERLAY DEL MENÚ MÓVIL (Fuera del nav, al mismo nivel) -->
+    <div class="menu-overlay" id="menu-overlay"></div>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-badge animate-fade-up">
+            <i data-lucide="sparkles"></i>
+            Nuevo: Sistema de alertas inteligentes
+        </div>
+        <h1 class="animate-fade-up delay-1">
+            Gestiona tu flota<br>
+            <span class="gradient">sin complicaciones</span>
+        </h1>
+        <p class="animate-fade-up delay-2">
+            El dashboard más limpio y eficiente para controlar tus unidades móviles. 
+            Alertas en tiempo real, mantenimiento preventivo y todo lo que necesitas en un solo lugar.
+        </p>
+        <div class="hero-cta animate-fade-up delay-3">
+            <a href="auth.html?mode=register" class="btn-primary" id="hero-cta-primary">
+                Comenzar gratis
+                <i data-lucide="arrow-right"></i>
+            </a>
+            <a href="#features" class="btn-secondary">
+                Ver funciones
+                <i data-lucide="chevron-down"></i>
+            </a>
+        </div>
+
+        <!-- Mockup del Dashboard -->
+        <div class="hero-mockup animate-fade-up delay-3">
+            <div class="mockup-container">
+                <div class="mockup-browser-bar">
+                    <div class="mockup-dot"></div>
+                    <div class="mockup-dot"></div>
+                    <div class="mockup-dot"></div>
+                    <div class="mockup-url">app.fleetos.com/dashboard</div>
+                </div>
+                <div class="mockup-content">
+                    <div class="mockup-metric">
+                        <div class="mockup-metric-icon active"><i data-lucide="check-circle-2"></i></div>
+                        <div>
+                            <div class="mockup-metric-value">12</div>
+                            <div class="mockup-metric-label">Activas</div>
+                        </div>
+                    </div>
+                    <div class="mockup-metric">
+                        <div class="mockup-metric-icon warning"><i data-lucide="wrench"></i></div>
+                        <div>
+                            <div class="mockup-metric-value">3</div>
+                            <div class="mockup-metric-label">Taller</div>
+                        </div>
+                    </div>
+                    <div class="mockup-metric">
+                        <div class="mockup-metric-icon idle"><i data-lucide="pause-circle"></i></div>
+                        <div>
+                            <div class="mockup-metric-value">2</div>
+                            <div class="mockup-metric-label">Inactivas</div>
+                        </div>
+                    </div>
+                    <div class="mockup-metric">
+                        <div class="mockup-metric-icon critical"><i data-lucide="alert-triangle"></i></div>
+                        <div>
+                            <div class="mockup-metric-value">1</div>
+                            <div class="mockup-metric-label">Alertas</div>
+                        </div>
+                    </div>
+                    <div class="mockup-row">
+                        <div class="mockup-row-icon"><i data-lucide="truck"></i></div>
+                        <div class="mockup-row-content">
+                            <div class="mockup-row-title">Volvo FH16 - 45T</div>
+                            <div class="mockup-row-subtitle">M. Torres • ABC-123</div>
+                        </div>
+                        <div class="mockup-row-badge warning">Taller</div>
+                    </div>
+                    <div class="mockup-row">
+                        <div class="mockup-row-icon"><i data-lucide="alert-triangle"></i></div>
+                        <div class="mockup-row-content">
+                            <div class="mockup-row-title">Mantenimiento Vencido</div>
+                            <div class="mockup-row-subtitle">Mercedes Actros - Cambio de aceite</div>
+                        </div>
+                        <div class="mockup-row-badge critical">Crítico</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LOGOS -->
+    <section class="logos-section">
+        <div class="logos-label">Empresas que confían en Fleet OS</div>
+        <div class="logos-grid">
+            <div class="logo-item">Transportes MX</div>
+            <div class="logo-item">LogiFleet</div>
+            <div class="logo-item">CargoPro</div>
+            <div class="logo-item">RutaExpress</div>
+            <div class="logo-item">FleetMax</div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features" id="features">
+        <div class="section-header">
+            <div class="section-label">Funciones</div>
+            <h2 class="section-title">Todo lo que necesitas<br>para gestionar tu flota</h2>
+            <p class="section-subtitle">Diseñado para operadores de flotas que valoran la simplicidad y la eficiencia.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon blue"><i data-lucide="layout-dashboard"></i></div>
+                <h3>Dashboard Intuitivo</h3>
+                <p>Vista general de tu flota en un solo lugar. Métricas clave, alertas y actividad reciente al instante.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon red"><i data-lucide="bell-ring"></i></div>
+                <h3>Alertas Inteligentes</h3>
+                <p>Notificaciones automáticas de mantenimientos vencidos, seguros por expirar y estados críticos.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon amber"><i data-lucide="shield"></i></div>
+                <h3>Vencimientos Próximos</h3>
+                <p>Control total de seguros, revisiones técnicas y mantenimientos programados por fecha o kilometraje.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon green"><i data-lucide="wrench"></i></div>
+                <h3>Gestión de Taller</h3>
+                <p>Registra diagnósticos, piezas requeridas, mecánicos asignados y fechas estimadas de salida.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon purple"><i data-lucide="search"></i></div>
+                <h3>Búsqueda Global</h3>
+                <p>Encuentra cualquier unidad, conductor o alerta en segundos con búsqueda unificada instantánea.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon gray"><i data-lucide="history"></i></div>
+                <h3>Historial Completo</h3>
+                <p>Registro completo de cada cambio. Sabes exactamente qué se modificó, cuándo y en qué unidad.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- DEMO PREVIEW -->
+    <section class="demo-section" id="demo">
+        <div class="demo-inner">
+            <div class="demo-grid">
+                <div class="demo-content">
+                    <div class="section-label">Versión Demo</div>
+                    <h2 class="section-title">Pruébalo antes de comprometerte</h2>
+                    <p>Accede a una versión completa de Fleet OS con datos de ejemplo. Explora todas las funciones sin necesidad de crear una cuenta.</p>
+                    <ul class="demo-features">
+                        <li><i data-lucide="check-circle-2"></i> Dashboard completo con métricas en tiempo real</li>
+                        <li><i data-lucide="check-circle-2"></i> Gestión de unidades, conductores y alertas</li>
+                        <li><i data-lucide="check-circle-2"></i> Historial de actividad y vencimientos</li>
+                        <li><i data-lucide="check-circle-2"></i> Modo oscuro y búsqueda global</li>
+                        <li><i data-lucide="check-circle-2"></i> Sin registro, sin compromiso</li>
+                    </ul>
+                    <a href="demo.html" class="btn-primary">
+                        Abrir demo interactiva
+                        <i data-lucide="external-link"></i>
+                    </a>
+                </div>
+                <div class="demo-visual">
+                    <div class="demo-visual-header">
+                        <div class="demo-visual-title">Alertas Activas</div>
+                        <div class="demo-visual-badge">3 pendientes</div>
+                    </div>
+                    <div class="demo-visual-list">
+                        <div class="demo-visual-item">
+                            <div class="demo-visual-item-icon" style="background: #FEF2F2; color: var(--critical);"><i data-lucide="alert-triangle"></i></div>
+                            <div class="demo-visual-item-content">
+                                <div class="demo-visual-item-title">Mantenimiento Vencido</div>
+                                <div class="demo-visual-item-subtitle">Mercedes Actros</div>
+                            </div>
+                            <div class="demo-visual-item-status" style="background: #FEF2F2; color: var(--critical);">Crítico</div>
+                        </div>
+                        <div class="demo-visual-item">
+                            <div class="demo-visual-item-icon" style="background: #FFFBEB; color: var(--warning);"><i data-lucide="shield"></i></div>
+                            <div class="demo-visual-item-content">
+                                <div class="demo-visual-item-title">Seguro por Vencer</div>
+                                <div class="demo-visual-item-subtitle">Volvo FH16 - 3 días</div>
+                            </div>
+                            <div class="demo-visual-item-status" style="background: #FFFBEB; color: var(--warning);">Advertencia</div>
+                        </div>
+                        <div class="demo-visual-item">
+                            <div class="demo-visual-item-icon" style="background: #FFFBEB; color: var(--warning);"><i data-lucide="wrench"></i></div>
+                            <div class="demo-visual-item-content">
+                                <div class="demo-visual-item-title">Revisión Técnica</div>
+                                <div class="demo-visual-item-subtitle">Scania R500 - Mañana</div>
+                            </div>
+                            <div class="demo-visual-item-status" style="background: #FFFBEB; color: var(--warning);">Advertencia</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="pricing" id="pricing">
+        <div class="section-header">
+            <div class="section-label">Precios</div>
+            <h2 class="section-title">Planes para cada necesidad</h2>
+            <p class="section-subtitle">Desde operaciones pequeñas hasta flotas empresariales. Escala cuando lo necesites.</p>
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-name">Free</div>
+                <div class="pricing-desc">Para empezar a organizar tu flota</div>
+                <div class="pricing-price">
+                    <span class="pricing-amount">$0</span>
+                    <span class="pricing-period">/mes</span>
+                </div>
+                <ul class="pricing-features">
+                    <li><i data-lucide="check"></i> Hasta 5 unidades</li>
+                    <li><i data-lucide="check"></i> Hasta 5 conductores</li>
+                    <li><i data-lucide="check"></i> Alertas básicas</li>
+                    <li><i data-lucide="check"></i> Historial de actividad</li>
+                </ul>
+                <a href="demo.html" class="pricing-btn secondary">Empezar gratis</a>
+            </div>
+            <div class="pricing-card featured">
+                <div class="pricing-popular">Más popular</div>
+                <div class="pricing-name">Pro</div>
+                <div class="pricing-desc">Para operaciones en crecimiento</div>
+                <div class="pricing-price">
+                    <span class="pricing-amount">$29</span>
+                    <span class="pricing-period">/mes</span>
+                </div>
+                <ul class="pricing-features">
+                    <li><i data-lucide="check"></i> Hasta 25 unidades</li>
+                    <li><i data-lucide="check"></i> Hasta 10 conductores</li>
+                    <li><i data-lucide="check"></i> Alertas avanzadas</li>
+                    <li><i data-lucide="check"></i> Vencimientos próximos</li>
+                    <li><i data-lucide="check"></i> Soporte prioritario</li>
+                </ul>
+                <a href="demo.html" class="pricing-btn primary">Probar Pro</a>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-name">Enterprise</div>
+                <div class="pricing-desc">Para flotas grandes</div>
+                <div class="pricing-price">
+                    <span class="pricing-amount">$99</span>
+                    <span class="pricing-period">/mes</span>
+                </div>
+                <ul class="pricing-features">
+                    <li><i data-lucide="check"></i> Unidades ilimitadas</li>
+                    <li><i data-lucide="check"></i> Conductores ilimitados</li>
+                    <li><i data-lucide="check"></i> API de integración</li>
+                    <li><i data-lucide="check"></i> Soporte dedicado</li>
+                    <li><i data-lucide="check"></i> SLA garantizado</li>
+                </ul>
+                <a href="#" class="pricing-btn secondary">Contactar ventas</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials">
+        <div class="testimonials-inner">
+            <div class="section-header">
+                <div class="section-label">Testimonios</div>
+                <h2 class="section-title">Lo que dicen nuestros usuarios</h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
+                    </div>
+                    <p class="testimonial-text">"Antes usaba hojas de cálculo para todo. Fleet OS me ahorró horas de trabajo cada semana y nunca más se me pasó un mantenimiento."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">MR</div>
+                        <div>
+                            <div class="testimonial-name">Miguel Rodríguez</div>
+                            <div class="testimonial-role">Gerente de Flota, Transportes MX</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
+                    </div>
+                    <p class="testimonial-text">"La interfaz es increíblemente limpia. No necesito capacitación para usarlo, todo es intuitivo. Mis conductores también lo adoran."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">LG</div>
+                        <div>
+                            <div class="testimonial-name">Laura González</div>
+                            <div class="testimonial-role">Operadora, LogiFleet</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
+                    </div>
+                    <p class="testimonial-text">"Las alertas de vencimiento de seguros nos salvaron de multas varias veces. El ROI se pagó solo en el primer mes."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">JP</div>
+                        <div>
+                            <div class="testimonial-name">Jorge Pérez</div>
+                            <div class="testimonial-role">Director, CargoPro</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="cta-section">
+        <div class="cta-inner">
+            <h2>Empieza a gestionar tu flota hoy</h2>
+            <p>Prueba la demo completa. Sin registro, sin tarjeta de crédito.</p>
+            <a href="demo.html" class="btn-primary">
+                Abrir demo interactiva
+                <i data-lucide="arrow-right"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-left">
+                <div class="logo-icon" style="width: 20px; height: 20px;">
+                    <i data-lucide="truck"></i>
+                </div>
+                <span>© 2025 Fleet OS. Todos los derechos reservados.</span>
+            </div>
+            <div class="footer-links">
+                <a href="#features">Funciones</a>
+                <a href="#pricing">Precios</a>
+                <a href="demo.html">Demo</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

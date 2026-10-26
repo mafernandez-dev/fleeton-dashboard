@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" 
+      content="default-src 'self'; 
+               script-src 'self' https://cdn.jsdelivr.net https://unpkg.com 'unsafe-inline'; 
+               style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; 
+               font-src 'self' https://fonts.gstatic.com;
+               img-src 'self' data: https:;
+               connect-src 'self' https://*.supabase.co;">
+  <title>Fleet OS - Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link rel="stylesheet" href="demo.css">
+</head>
+<body>
+
+    <!-- Demo Banner -->
+    <div class="demo-banner">
+        <i data-lucide="flask-conical"></i>
+        <span>Versión Demo - Los cambios no se guardan permanentemente</span>
+        <a href="index.html">← Volver</a>
+    </div>
+
+    <div class="app-shell">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="greeting">
+                    <div class="greeting-title-row">
+                        <h1 class="greeting-name">Carlos</h1>
+                        <span class="critical-alerts-badge" id="critical-badge" style="display: none;">
+                            <i data-lucide="alert-circle"></i>
+                            <span id="critical-count">0</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="header-btn" id="btn-global-search" aria-label="Buscar">
+                        <i data-lucide="search"></i>
+                    </button>
+                    <button class="avatar-btn" data-action="show-profile" aria-label="Perfil">
+    <img class="avatar-image" id="avatar-image" src="" alt="Perfil" style="display: none;">
+    <span class="avatar-initials" id="avatar-initials">CR</span>
+</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- View: Dashboard -->
+            <section id="view-dashboard" class="view active">
+                <div class="metrics-grid">
+                    <div class="metric-card" data-filter="active">
+                        <div class="metric-icon active"><i data-lucide="check-circle-2"></i></div>
+                        <div class="metric-data">
+                            <span class="metric-value" id="metric-active">0</span>
+                            <span class="metric-label">Activas</span>
+                        </div>
+                    </div>
+                    <div class="metric-card" data-filter="maintenance">
+                        <div class="metric-icon warning"><i data-lucide="wrench"></i></div>
+                        <div class="metric-data">
+                            <span class="metric-value" id="metric-maintenance">0</span>
+                            <span class="metric-label">Taller</span>
+                        </div>
+                    </div>
+                    <div class="metric-card" data-filter="idle">
+                        <div class="metric-icon idle"><i data-lucide="pause-circle"></i></div>
+                        <div class="metric-data">
+                            <span class="metric-value" id="metric-idle">0</span>
+                            <span class="metric-label">Inactivas</span>
+                        </div>
+                    </div>
+                    <div class="metric-card" data-filter="alerts">
+                        <div class="metric-icon critical"><i data-lucide="alert-triangle"></i></div>
+                        <div class="metric-data">
+                            <span class="metric-value" id="metric-alerts">0</span>
+                            <span class="metric-label">Alertas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Atención Inmediata</h2>
+                        <button class="btn-text" data-nav="alerts">Ver todo</button>
+                    </div>
+                    <div class="alerts-list" id="alerts-container"></div>
+                </section>
+
+                <section class="content-section" id="upcoming-section" style="display: none;">
+                    <div class="section-header">
+                        <h2 class="section-title">Vencimientos Próximos</h2>
+                        <button class="btn-text" data-nav="upcoming">Ver todo</button>
+                    </div>
+                    <div class="upcoming-list" id="upcoming-container"></div>
+                </section>
+
+                <section class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Actividad Reciente</h2>
+                        <button class="btn-text" data-nav="activity">Ver todo</button>
+                    </div>
+                    <div class="activity-list" id="activity-container"></div>
+                </section>
+
+                <section class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Flota Reciente</h2>
+                        <button class="btn-text" data-nav="fleet">Gestionar</button>
+                    </div>
+                    <div class="fleet-list" id="fleet-container"></div>
+                </section>
+            </section>
+
+            <!-- View: Fleet -->
+            <section id="view-fleet" class="view">
+                <div class="view-header">
+                    <h2 class="view-title">Gestión de Flota</h2>
+                    <button class="btn-primary" data-action="add-unit">
+                        <i data-lucide="plus"></i><span>Agregar</span>
+                    </button>
+                </div>
+                <div class="search-bar">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="fleet-search" placeholder="Buscar unidad o conductor...">
+                </div>
+                <div class="filter-chips">
+                    <button class="chip active" data-status="all">Todas</button>
+                    <button class="chip" data-status="active">Activas</button>
+                    <button class="chip" data-status="maintenance">Taller</button>
+                    <button class="chip" data-status="idle">Inactivas</button>
+                </div>
+                <div class="fleet-list-full" id="fleet-full-container"></div>
+            </section>
+
+            <!-- View: Alerts -->
+            <section id="view-alerts" class="view">
+                <div class="view-header">
+                    <h2 class="view-title">Centro de Alertas</h2>
+                </div>
+                <div class="filter-chips">
+                    <button class="chip active" data-severity="all">Todas</button>
+                    <button class="chip" data-severity="critical">Críticas</button>
+                    <button class="chip" data-severity="warning">Advertencias</button>
+                    <button class="chip" data-severity="resolved">Resueltas</button>
+                </div>
+                <div class="alerts-list-full" id="alerts-full-container"></div>
+            </section>
+
+            <!-- View: Settings -->
+            <section id="view-settings" class="view">
+                <div class="view-header">
+                    <h2 class="view-title">Configuración</h2>
+                </div>
+                <div class="settings-group">
+                    <h3 class="settings-group-title">Cuenta</h3>
+                    <div class="settings-list">
+                        <button class="settings-item" data-action="edit-profile">
+                            <i data-lucide="user"></i><span>Editar Perfil</span><i data-lucide="chevron-right"></i>
+                        </button>
+                        <button class="settings-item" data-action="manage-drivers">
+                            <i data-lucide="users"></i><span>Gestionar Conductores</span><i data-lucide="chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h3 class="settings-group-title">Plan Actual</h3>
+                    <div class="settings-list">
+                        <div class="plan-card" id="current-plan-card">
+                            <div class="plan-info">
+                                <span class="plan-name" id="current-plan-name">Free</span>
+                                <span class="plan-price" id="current-plan-price">$0/mes</span>
+                            </div>
+                            <div class="plan-limits">
+                                <div class="plan-limit-item">
+                                    <span class="plan-limit-label">Unidades</span>
+                                    <span class="plan-limit-value" id="plan-units-limit">0/5</span>
+                                </div>
+                                <div class="plan-limit-item">
+                                    <span class="plan-limit-label">Conductores</span>
+                                    <span class="plan-limit-value" id="plan-drivers-limit">0/5</span>
+                                </div>
+                            </div>
+                            <button class="btn-upgrade" data-action="upgrade-plan">Mejorar Plan</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h3 class="settings-group-title">Demo</h3>
+                    <div class="settings-list">
+                        <button class="settings-item" data-action="reset-demo">
+                            <i data-lucide="refresh-cw"></i><span>Reiniciar Demo</span><i data-lucide="chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h3 class="settings-group-title">Preferencias</h3>
+                    <div class="settings-list">
+                        <div class="settings-item toggle-item">
+                            <i data-lucide="bell"></i><span>Notificaciones Push</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="toggle-notifications" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item toggle-item">
+                            <i data-lucide="moon"></i><span>Modo Oscuro</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="toggle-dark-mode">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h3 class="settings-group-title">Sistema</h3>
+                    <div class="settings-list">
+                        <button class="settings-item" data-action="sync-data">
+                            <i data-lucide="refresh-cw"></i><span>Sincronizar Datos</span><i data-lucide="chevron-right"></i>
+                        </button>
+                        <button class="settings-item danger" data-action="logout">
+                            <i data-lucide="log-out"></i><span>Cerrar Sesión</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View: Drivers -->
+            <section id="view-drivers" class="view">
+                <div class="view-header">
+                    <button class="btn-back" data-nav="settings"><i data-lucide="arrow-left"></i></button>
+                    <h2 class="view-title">Conductores</h2>
+                    <button class="btn-primary" data-action="add-driver">
+                        <i data-lucide="plus"></i><span>Agregar</span>
+                    </button>
+                </div>
+                <div class="search-bar">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="driver-search" placeholder="Buscar conductor...">
+                </div>
+                <div class="drivers-list" id="drivers-container"></div>
+            </section>
+
+            <!-- View: Activity Log -->
+            <section id="view-activity" class="view">
+                <div class="view-header">
+                    <button class="btn-back" data-nav="dashboard"><i data-lucide="arrow-left"></i></button>
+                    <h2 class="view-title">Historial</h2>
+                </div>
+                <div class="filter-chips">
+                    <button class="chip active" data-activity-type="all">Todas</button>
+                    <button class="chip" data-activity-type="unit">Unidades</button>
+                    <button class="chip" data-activity-type="driver">Conductores</button>
+                    <button class="chip" data-activity-type="alert">Alertas</button>
+                </div>
+                <div class="activity-list-full" id="activity-full-container"></div>
+            </section>
+
+            <!-- View: Upcoming -->
+            <section id="view-upcoming" class="view">
+                <div class="view-header">
+                    <button class="btn-back" data-nav="dashboard"><i data-lucide="arrow-left"></i></button>
+                    <h2 class="view-title">Vencimientos</h2>
+                </div>
+                <div class="upcoming-list-full" id="upcoming-full-container"></div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-view="dashboard">
+                <i data-lucide="layout-dashboard"></i><span>Inicio</span>
+            </button>
+            <button class="nav-item" data-view="fleet">
+                <i data-lucide="truck"></i><span>Flota</span>
+            </button>
+            <button class="nav-item" data-view="alerts">
+                <div class="nav-icon-wrapper">
+                    <i data-lucide="bell"></i>
+                    <span class="alert-badge" id="alert-badge" style="display: none;">0</span>
+                </div>
+                <span>Alertas</span>
+            </button>
+            <button class="nav-item" data-view="settings">
+                <i data-lucide="settings"></i><span>Ajustes</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Bottom Sheet Container -->
+    <div class="sheet-overlay" id="sheet-overlay"></div>
+    <div class="bottom-sheet" id="bottom-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-content" id="sheet-content"></div>
+    </div>
+
+    <!-- Modal Container -->
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <div class="modal" id="modal">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modal-title"></h3>
+            <button class="modal-close" data-action="close-modal"><i data-lucide="x"></i></button>
+        </div>
+        <div class="modal-body" id="modal-body"></div>
+        <div class="modal-footer" id="modal-footer"></div>
+    </div>
+
+    <!-- Global Search Modal -->
+    <div class="modal-overlay" id="search-overlay"></div>
+    <div class="modal search-modal" id="search-modal">
+        <div class="search-modal-header">
+            <div class="search-modal-input-wrapper">
+                <i data-lucide="search"></i>
+                <input type="text" id="global-search-input" placeholder="Buscar unidades, conductores, alertas..." autocomplete="off">
+            </div>
+            <button class="modal-close" data-action="close-search"><i data-lucide="x"></i></button>
+        </div>
+        <div class="search-modal-body" id="search-modal-body">
+            <div class="search-empty">
+                <i data-lucide="search"></i>
+                <p>Empieza a escribir para buscar</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="demo.js"></script>
+</body>
+</html>

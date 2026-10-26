@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" 
+      content="default-src 'self'; 
+               script-src 'self' https://cdn.jsdelivr.net https://unpkg.com 'unsafe-inline'; 
+               style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; 
+               font-src 'self' https://fonts.gstatic.com;
+               img-src 'self' data: https:;
+               connect-src 'self' https://*.supabase.co;">
+    <title>Fleet OS - Acceso</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+
+    <main class="auth-container">
+        <header class="auth-header">
+            <div class="auth-logo">
+                <div class="auth-logo-icon">
+                    <i data-lucide="truck"></i>
+                </div>
+                <span class="auth-logo-text">Fleet OS</span>
+            </div>
+            <h1 id="auth-title">Bienvenido de vuelta</h1>
+            <p id="auth-subtitle">Inicia sesión para gestionar tu flota</p>
+        </header>
+
+        <div class="tabs" role="tablist">
+            <button class="tab active" role="tab" aria-selected="true" data-tab="login" onclick="switchTab('login')">Iniciar Sesión</button>
+            <button class="tab" role="tab" aria-selected="false" data-tab="register" onclick="switchTab('register')">Crear Cuenta</button>
+        </div>
+
+        <div id="message-box" class="message" role="alert" aria-live="polite"></div>
+
+        <!-- Formulario de Login -->
+        <div id="login-form" class="form-container active">
+            <form onsubmit="handleLogin(event)" novalidate>
+                <div class="form-group">
+                    <label for="login-email">Correo electrónico</label>
+                    <input type="email" id="login-email" class="form-input" required placeholder="tu@empresa.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Contraseña</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="login-password" class="form-input" required placeholder="••••••••" autocomplete="current-password">
+                        <button type="button" class="password-toggle" aria-label="Mostrar contraseña" onclick="togglePassword('login-password', this)">
+                            <i data-lucide="eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit" id="login-btn">
+                    <span>Ingresar</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Formulario de Registro -->
+        <div id="register-form" class="form-container">
+            <form onsubmit="handleRegister(event)" novalidate>
+                <div class="form-group">
+                    <label for="register-name">Nombre completo</label>
+                    <input type="text" id="register-name" class="form-input" required placeholder="Carlos Rodríguez" autocomplete="name">
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Correo electrónico</label>
+                    <input type="email" id="register-email" class="form-input" required placeholder="tu@empresa.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Contraseña</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="register-password" class="form-input" required placeholder="Mínimo 6 caracteres" minlength="6" autocomplete="new-password">
+                        <button type="button" class="password-toggle" aria-label="Mostrar contraseña" onclick="togglePassword('register-password', this)">
+                            <i data-lucide="eye"></i>
+                        </button>
+                    </div>
+                    <p class="password-hint">Debe tener al menos 6 caracteres</p>
+                </div>
+                <button type="submit" class="btn-submit" id="register-btn">
+                    <span>Crear cuenta</span>
+                </button>
+            </form>
+        </div>
+
+        <a href="index.html" class="back-link">
+            <i data-lucide="arrow-left"></i>
+            Volver a la página principal
+        </a>
+    </main>
+
+    <script type="module" src="auth.js"></script>
+</body>
+</html>

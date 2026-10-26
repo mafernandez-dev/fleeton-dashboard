@@ -1002,10 +1002,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             State.user.email = session.user.email;
             State.user.plan = profileData.plan || 'free';
             State.user.avatar_url = profileData.avatar_url || '';
+            
+            // ✅ AQUÍ ES DONDE DEBE IR: Actualiza el nombre en el HTML inmediatamente
+            document.querySelector('.greeting-name').textContent = State.user.name;
         }
     } catch (error) {
         console.error('Error cargando datos:', error);
-        document.querySelector('.greeting-name').textContent = State.user.name;
     }
 
     // 3. RENDERIZAR

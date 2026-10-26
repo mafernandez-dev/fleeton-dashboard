@@ -1790,3 +1790,15 @@ body::-webkit-scrollbar,
 .modal-body::-webkit-scrollbar {
     display: none;
 }
+
+/* Ocultar avatar hasta que cargue el perfil */
+.avatar-btn.avatar-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.avatar-btn {
+    opacity: 1;
+    pointer-events: auto;
+}

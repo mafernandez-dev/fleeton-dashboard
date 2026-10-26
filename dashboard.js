@@ -1024,8 +1024,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             // ✅ Muestra el avatar con las iniciales correctas
             const avatarBtn = document.getElementById('avatar-btn');
             if (avatarBtn) {
-                avatarBtn.style.display = ''; // Restaura el display original
-            }
+             avatarBtn.classList.remove('avatar-hidden');
+          }
         }
     } catch (error) {
         console.error('Error cargando perfil:', error);

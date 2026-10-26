@@ -1006,7 +1006,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     currentUserId = session.user.id;
 
-    // 2. CARGAR PERFIL PRIMERO (para evitar el parpadeo)
+    // 2. CARGAR PERFIL PRIMERO
     try {
         const { data: profileData } = await supabase.from('profiles').select('*').eq('id', currentUserId).single();
         if (profileData) {
@@ -1015,17 +1015,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             State.user.plan = profileData.plan || 'free';
             State.user.avatar_url = profileData.avatar_url || '';
             
-            // ✅ Actualiza el nombre INMEDIATAMENTE
+            // Actualiza el nombre INMEDIATAMENTE
             const greetingElement = document.querySelector('.greeting-name');
             if (greetingElement) {
                 greetingElement.textContent = State.user.name;
             }
-            
-            // ✅ Muestra el avatar con las iniciales correctas
-            const avatarBtn = document.getElementById('avatar-btn');
-            if (avatarBtn) {
-             avatarBtn.classList.remove('avatar-hidden');
-          }
         }
     } catch (error) {
         console.error('Error cargando perfil:', error);
@@ -1055,4 +1049,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.body.classList.add('dark-mode'); 
         document.getElementById('toggle-dark-mode').checked = true; 
     }
+
+    // 5. ✅ OCULTAR SPLASH SCREEN (con un pequeño delay para suavidad)
+    setTimeout(() => {
+        const splash = document.getElementById('splash-screen');
+        if (splash) {
+            splash.classList.add('hidden');
+            // Remover del DOM después de la animación
+            setTimeout(() => splash.remove(), 400);
+        }
+    }, 300);
 });

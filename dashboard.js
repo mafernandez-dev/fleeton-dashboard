@@ -689,7 +689,18 @@ function logout() {
     openModal('Cerrar Sesión', body, footer);
 }
 
-function confirmLogout() { closeModal(); showToast('Sesión cerrada'); setTimeout(() => { window.location.href = 'auth.html'; }, 1000); }
+async function confirmLogout() {
+    // 1. Cerrar sesión en Supabase
+    await supabase.auth.signOut();
+    
+    // 2. Limpiar el estado local
+    localStorage.removeItem(STORAGE_KEY);
+    
+    // 3. Mostrar mensaje y redirigir
+    closeModal();
+    showToast('Sesión cerrada');
+    setTimeout(() => { window.location.href = 'auth.html'; }, 500);
+}
 
 function showUpgradeModal() {
     const currentPlanId = State.user.plan;

@@ -77,25 +77,10 @@ const PLANS = {
 };
 
 const DefaultState = {
-    user: { name: 'Carlos', email: 'carlos@fleet.com', role: 'Administrador', avatar_url: '', plan: 'free' },
-    fleet: [
-        { id: 'u-001', unit_name: 'Volvo FH16 - 45T', driver: 'M. Torres', status: 'active', plate: 'ABC-123', year: 2022, mileage: 145000, status_comment: '', maintenance_info: null, insurance_expiry: '2025-02-15', next_maintenance_km: 150000, next_maintenance_date: '2025-03-01' },
-        { id: 'u-002', unit_name: 'Scania R500', driver: 'J. Gómez', status: 'active', plate: 'DEF-456', year: 2021, mileage: 178000, status_comment: '', maintenance_info: null, insurance_expiry: '2025-06-20', next_maintenance_km: 180000, next_maintenance_date: '2025-04-15' },
-        { id: 'u-003', unit_name: 'Mercedes Actros', driver: 'Sin asignar', status: 'maintenance', plate: 'GHI-789', year: 2020, mileage: 210000, status_comment: 'Falla en transmisión', maintenance_info: { entry_date: '2025-01-15', issue: 'Falla en caja de cambios', parts_needed: 'Caja de cambios completa, embrague', mechanic: 'Taller Central S.A.', estimated_exit: '2025-02-01' }, insurance_expiry: '2025-01-30', next_maintenance_km: 215000, next_maintenance_date: '2025-02-10' },
-        { id: 'u-004', unit_name: 'DAF XF', driver: 'L. Ruiz', status: 'idle', plate: 'JKL-012', year: 2023, mileage: 89000, status_comment: 'Esperando asignación de ruta', maintenance_info: null, insurance_expiry: '2025-12-01', next_maintenance_km: 100000, next_maintenance_date: '2025-05-01' },
-        { id: 'u-005', unit_name: 'MAN TGX', driver: 'P. Silva', status: 'active', plate: 'MNO-345', year: 2022, mileage: 132000, status_comment: '', maintenance_info: null, insurance_expiry: '2025-08-15', next_maintenance_km: 140000, next_maintenance_date: '2025-03-20' }
-    ],
-    drivers: [
-        { id: 'd-001', name: 'M. Torres', phone: '+52 555 123 4567', license: 'A-12345' },
-        { id: 'd-002', name: 'J. Gómez', phone: '+52 555 234 5678', license: 'A-23456' },
-        { id: 'd-003', name: 'L. Ruiz', phone: '+52 555 345 6789', license: 'A-34567' },
-        { id: 'd-004', name: 'P. Silva', phone: '+52 555 456 7890', license: 'A-45678' }
-    ],
-    alerts: [
-        { id: 'a-001', unit_id: 'u-003', title: 'Mantenimiento Vencido', alert_desc: 'Mercedes Actros - Cambio de aceite', severity: 'critical', resolved: false },
-        { id: 'a-002', unit_id: 'u-001', title: 'Seguro por vencer', alert_desc: 'Volvo FH16 - Vence en 3 días', severity: 'warning', resolved: false },
-        { id: 'a-003', unit_id: 'u-002', title: 'Revisión técnica', alert_desc: 'Scania R500 - Programada para mañana', severity: 'warning', resolved: false }
-    ],
+    user: { name: 'Usuario', email: '', role: 'Administrador', avatar_url: '', plan: 'free' },
+    fleet: [], // Lista vacía
+    drivers: [], // Lista vacía
+    alerts: [], // Lista vacía
     activityLog: [],
     filters: { fleet: { status: 'all', search: '' }, alerts: { severity: 'all' }, drivers: { search: '' }, activity: { type: 'all' } },
     preferences: { notifications: true, darkMode: false },
@@ -1020,6 +1005,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     } catch (error) {
         console.error('Error cargando datos:', error);
+        document.querySelector('.greeting-name').textContent = State.user.name;
     }
 
     // 3. RENDERIZAR

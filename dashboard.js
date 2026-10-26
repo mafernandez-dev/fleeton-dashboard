@@ -92,9 +92,9 @@ const DefaultState = {
         { id: 'd-004', name: 'P. Silva', phone: '+52 555 456 7890', license: 'A-45678' }
     ],
     alerts: [
-        { id: 'a-001', unit_id: 'u-003', title: 'Mantenimiento Vencido', desc: 'Mercedes Actros - Cambio de aceite', severity: 'critical', resolved: false },
-        { id: 'a-002', unit_id: 'u-001', title: 'Seguro por vencer', desc: 'Volvo FH16 - Vence en 3 días', severity: 'warning', resolved: false },
-        { id: 'a-003', unit_id: 'u-002', title: 'Revisión técnica', desc: 'Scania R500 - Programada para mañana', severity: 'warning', resolved: false }
+        { id: 'a-001', unit_id: 'u-003', title: 'Mantenimiento Vencido', alert_desc: 'Mercedes Actros - Cambio de aceite', severity: 'critical', resolved: false },
+        { id: 'a-002', unit_id: 'u-001', title: 'Seguro por vencer', alert_desc: 'Volvo FH16 - Vence en 3 días', severity: 'warning', resolved: false },
+        { id: 'a-003', unit_id: 'u-002', title: 'Revisión técnica', alert_desc: 'Scania R500 - Programada para mañana', severity: 'warning', resolved: false }
     ],
     activityLog: [],
     filters: { fleet: { status: 'all', search: '' }, alerts: { severity: 'all' }, drivers: { search: '' }, activity: { type: 'all' } },
@@ -272,7 +272,7 @@ function createFleetItemHTML(unit) {
 }
 
 function createAlertItemHTML(alert) {
-    return `<div class="alert-item ${sanitizeHTML(alert.severity)} ${alert.resolved ? 'resolved' : ''}" data-action="show-alert" data-id="${sanitizeHTML(alert.id)}"><div class="alert-info"><h4>${sanitizeHTML(alert.title)}</h4><p>${sanitizeHTML(alert.desc)}</p></div><button class="alert-action" aria-label="Acción"><i data-lucide="chevron-right"></i></button></div>`;
+    return `<div class="alert-item ${sanitizeHTML(alert.severity)} ${alert.resolved ? 'resolved' : ''}" data-action="show-alert" data-id="${sanitizeHTML(alert.id)}"><div class="alert-info"><h4>${sanitizeHTML(alert.title)}</h4><p>${sanitizeHTML(alert.alert_desc)}</p></div><button class="alert-action" aria-label="Acción"><i data-lucide="chevron-right"></i></button></div>`;
 }
 
 function createUpcomingItemHTML(item) {
@@ -395,7 +395,7 @@ function showAlertDialog(alertId) {
     const alert = State.alerts.find(a => a.id === alertId);
     if (!alert) return;
     const unit = State.fleet.find(u => u.id === alert.unit_id);
-    const content = `<h3 class="sheet-title">${sanitizeHTML(alert.title)}</h3><div class="sheet-section"><div class="sheet-info-row"><span class="sheet-info-label">Unidad</span><span class="sheet-info-value">${unit ? sanitizeHTML(unit.unit_name) : 'N/A'}</span></div><div class="sheet-info-row"><span class="sheet-info-label">Detalle</span><span class="sheet-info-value">${sanitizeHTML(alert.desc)}</span></div><div class="sheet-info-row"><span class="sheet-info-label">Severidad</span><span class="sheet-info-value"><span class="status-pill ${alert.severity === 'critical' ? 'maintenance' : 'idle'}">${sanitizeHTML(alert.severity)}</span></span></div></div>${!alert.resolved ? `<div class="sheet-section"><div class="sheet-actions"><button class="sheet-btn" data-action="resolve-alert" data-id="${sanitizeHTML(alert.id)}"><i data-lucide="check-circle"></i><span>Marcar como Resuelta</span></button></div></div>` : ''}`;
+    const content = `<h3 class="sheet-title">${sanitizeHTML(alert.title)}</h3><div class="sheet-section"><div class="sheet-info-row"><span class="sheet-info-label">Unidad</span><span class="sheet-info-value">${unit ? sanitizeHTML(unit.unit_name) : 'N/A'}</span></div><div class="sheet-info-row"><span class="sheet-info-label">Detalle</span><span class="sheet-info-value">${sanitizeHTML(alert.alert_desc)}</span></div><div class="sheet-info-row"><span class="sheet-info-label">Severidad</span><span class="sheet-info-value"><span class="status-pill ${alert.severity === 'critical' ? 'maintenance' : 'idle'}">${sanitizeHTML(alert.severity)}</span></span></div></div>${!alert.resolved ? `<div class="sheet-section"><div class="sheet-actions"><button class="sheet-btn" data-action="resolve-alert" data-id="${sanitizeHTML(alert.id)}"><i data-lucide="check-circle"></i><span>Marcar como Resuelta</span></button></div></div>` : ''}`;
     openSheet(content);
 }
 
